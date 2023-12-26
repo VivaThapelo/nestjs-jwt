@@ -25,7 +25,7 @@ export class AppController {
   @Post('/login')
   async login(
     @Body() body: LoginUserDto,
-    @Res() response: Response,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<Response<string>> {
     try {
       const token = await this.appService.findOne(body);
@@ -43,5 +43,13 @@ export class AppController {
     } catch (error) {
       throw new UnauthorizedException();
     }
+  }
+
+  @Post('/logout')
+  async logout(
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<Response<string>> {
+    response.clearCookie('jwt');
+    return response.status(200).json({ message: 'Logout Successful' }).send();
   }
 }
